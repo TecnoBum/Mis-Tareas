@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>Mis Tareas · Productividad</title>
+  <title>Mis Tareas · Multi-usuario</title>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- Fuente Inter -->
@@ -25,6 +25,9 @@
       justify-content: center;
       padding: 0;
       transition: background 0.3s ease;
+      position: fixed;
+      width: 100%;
+      overflow: hidden;
     }
 
     /* Modal optimizado */
@@ -126,18 +129,19 @@
       box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
     }
 
-    /* App container optimizado */
+    /* App container - estructura fija */
     .app-container {
       width: 100%;
-      min-height: 100vh;
+      height: 100vh;
       background: rgba(255,255,255,0.95);
       backdrop-filter: blur(20px);
       display: flex;
       flex-direction: column;
       position: relative;
+      overflow: hidden;
     }
 
-    /* Header mejorado */
+    /* Header fijo */
     .mobile-header {
       padding: 20px 20px 16px;
       background: rgba(255,255,255,0.8);
@@ -146,6 +150,7 @@
       top: 0;
       z-index: 10;
       border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+      flex-shrink: 0;
     }
 
     .header-top {
@@ -173,6 +178,12 @@
       font-size: 1.4rem;
       color: white;
       box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .user-avatar:active {
+      transform: scale(0.95);
     }
 
     .greeting-text h2 {
@@ -221,6 +232,7 @@
       display: flex;
       gap: 10px;
       padding: 4px 0;
+      flex-shrink: 0;
     }
 
     .tab-btn {
@@ -256,16 +268,19 @@
       transform: scale(0.97);
     }
 
-    /* Contenido principal */
+    /* Contenido principal - área con scroll */
     .main-content {
       flex: 1;
-      padding: 24px 20px 100px;
+      padding: 24px 20px 20px;
       overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     .panel {
       display: none;
       animation: panelFade 0.3s ease;
+      padding-bottom: 20px;
     }
 
     @keyframes panelFade {
@@ -573,12 +588,8 @@
       background-clip: text;
     }
 
-    /* Barra de navegación inferior mejorada */
+    /* Footer fijo - NUEVO */
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
       background: rgba(255,255,255,0.95);
       backdrop-filter: blur(20px);
       border-top: 1px solid rgba(102, 126, 234, 0.1);
@@ -586,6 +597,8 @@
       display: flex;
       justify-content: space-around;
       z-index: 20;
+      flex-shrink: 0;
+      margin-top: auto;
     }
 
     .nav-item {
@@ -620,7 +633,7 @@
 
     /* FAB optimizado */
     .fab-add {
-      position: fixed;
+      position: absolute;
       bottom: 100px;
       right: 20px;
       width: 64px;
@@ -644,7 +657,7 @@
       box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
     }
 
-    /* Pantalla bienvenida mejorada */
+    /* Pantalla bienvenida */
     .welcome-screen {
       min-height: 100vh;
       display: flex;
@@ -714,6 +727,44 @@
       box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
     }
 
+    /* Selector de usuario */
+    .user-selector {
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(102, 126, 234, 0.05);
+      border-radius: 16px;
+    }
+
+    .user-selector p {
+      color: #64748b;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+
+    .user-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .user-chip {
+      background: white;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #1a1a2e;
+      font-weight: 500;
+    }
+
+    .user-chip:active {
+      background: #667eea;
+      color: white;
+      transform: scale(0.95);
+    }
+
     /* Utilidades */
     .empty-message {
       text-align: center;
@@ -739,21 +790,10 @@
         margin: 0 auto;
         border-radius: 32px;
         box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      }
-      .bottom-nav {
-        max-width: 480px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-radius: 30px 30px 0 0;
-      }
-      .fab-add {
-        right: calc(50% - 220px);
+        height: calc(100vh - 32px);
       }
       body {
         padding: 16px;
-      }
-      .app-container {
-        min-height: calc(100vh - 32px);
       }
     }
 
@@ -794,13 +834,20 @@
         <input type="text" id="userNameInput" placeholder="Ej: Ana" autocomplete="off">
       </div>
       <button class="btn-primary" id="startBtn" style="width:100%; padding:18px; border-radius:20px; font-size:1.1rem;">Comenzar</button>
+      
+      <!-- Selector de usuarios existentes -->
+      <div class="user-selector" id="existingUsersSection" style="display:none;">
+        <p>O selecciona un usuario existente:</p>
+        <div class="user-list" id="userList"></div>
+      </div>
+      
       <p style="margin-top:24px; color:#94a3b8; font-size:0.9rem;">Tus datos se guardan localmente</p>
     </div>
   </div>
 
   <!-- INTERFAZ PRINCIPAL -->
-  <div id="mainInterface" style="display: none; flex-direction: column; min-height: 100vh;">
-    <!-- Header -->
+  <div id="mainInterface" style="display: none; flex-direction: column; height: 100vh; overflow: hidden;">
+    <!-- Header fijo -->
     <div class="mobile-header">
       <div class="header-top">
         <div class="user-greeting">
@@ -811,7 +858,7 @@
           </div>
         </div>
         <div class="header-actions">
-          <button class="icon-btn" id="changeUserBtn"><i class="fas fa-user-edit"></i></button>
+          <button class="icon-btn" id="changeUserBtn"><i class="fas fa-users"></i></button>
           <button class="icon-btn" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
         </div>
       </div>
@@ -824,7 +871,7 @@
       </div>
     </div>
 
-    <!-- Contenido -->
+    <!-- Contenido con scroll -->
     <div class="main-content">
       <!-- Panel Notas -->
       <div class="panel active" id="notesPanel">
@@ -887,7 +934,7 @@
     <!-- FAB -->
     <button class="fab-add" id="fabAddBtn"><i class="fas fa-plus"></i></button>
 
-    <!-- Bottom Nav -->
+    <!-- Footer fijo - sin scroll -->
     <div class="bottom-nav">
       <div class="nav-item active" data-nav="notes"><i class="far fa-sticky-note"></i><span>Notas</span></div>
       <div class="nav-item" data-nav="tasks"><i class="far fa-check-circle"></i><span>Tareas</span></div>
@@ -900,12 +947,16 @@
   (function(){
     'use strict';
 
-    // Estado optimizado
-    let currentUser = localStorage.getItem('mis_tareas_opt_user') || '';
-    let notes = JSON.parse(localStorage.getItem('mis_tareas_opt_notes')) || [];
-    let tasks = JSON.parse(localStorage.getItem('mis_tareas_opt_tasks')) || [];
+    // Sistema de multi-usuario
+    let users = JSON.parse(localStorage.getItem('mis_tareas_users')) || {};
+    let currentUser = localStorage.getItem('mis_tareas_current_user') || '';
+    
+    // Datos del usuario actual
+    let notes = [];
+    let tasks = [];
+    let pomodoroCount = 0;
+    
     let currentTaskFilter = 'all';
-    let pomodoroCount = parseInt(localStorage.getItem('pomodoro_opt_count')) || 0;
     let currentView = 'notes';
     
     // Timer
@@ -930,8 +981,89 @@
     const pomodoroCountSpan = document.getElementById('pomodoroCount');
     const pendingTasksCountSpan = document.getElementById('pendingTasksCount');
     const reminderMsg = document.getElementById('reminderMsg');
+    const existingUsersSection = document.getElementById('existingUsersSection');
+    const userList = document.getElementById('userList');
 
-    // Funciones modales optimizadas
+    // Cargar datos del usuario actual
+    function loadUserData() {
+      if (currentUser && users[currentUser]) {
+        const userData = users[currentUser];
+        notes = userData.notes || [];
+        tasks = userData.tasks || [];
+        pomodoroCount = userData.pomodoroCount || 0;
+      } else {
+        notes = [];
+        tasks = [];
+        pomodoroCount = 0;
+      }
+    }
+
+    // Guardar datos del usuario actual
+    function saveUserData() {
+      if (currentUser) {
+        users[currentUser] = {
+          notes: notes,
+          tasks: tasks,
+          pomodoroCount: pomodoroCount,
+          lastAccess: new Date().toISOString()
+        };
+        localStorage.setItem('mis_tareas_users', JSON.stringify(users));
+        localStorage.setItem('mis_tareas_current_user', currentUser);
+      }
+    }
+
+    // Cambiar de usuario
+    function switchUser(username) {
+      if (!username) return;
+      
+      // Guardar datos del usuario actual antes de cambiar
+      if (currentUser) {
+        saveUserData();
+      }
+      
+      // Cargar nuevo usuario
+      currentUser = username;
+      loadUserData();
+      
+      // Actualizar UI
+      updateUserUI();
+      renderNotes();
+      renderTasks();
+      updateStats();
+      
+      showAlertModal(`¡Bienvenido de vuelta, ${username}!`, false);
+    }
+
+    // Actualizar UI con nombre de usuario
+    function updateUserUI() {
+      if (currentUser) {
+        displayUserName.textContent = currentUser;
+        userAvatar.textContent = currentUser.charAt(0).toUpperCase();
+      }
+    }
+
+    // Mostrar usuarios existentes
+    function renderExistingUsers() {
+      const userNames = Object.keys(users);
+      if (userNames.length > 0) {
+        existingUsersSection.style.display = 'block';
+        userList.innerHTML = '';
+        userNames.forEach(name => {
+          const chip = document.createElement('span');
+          chip.className = 'user-chip';
+          chip.textContent = name;
+          chip.addEventListener('click', () => {
+            switchUser(name);
+            showMainInterface();
+          });
+          userList.appendChild(chip);
+        });
+      } else {
+        existingUsersSection.style.display = 'none';
+      }
+    }
+
+    // Funciones modales
     function showModal(title, bodyHtml, actions = []) {
       modalTitle.textContent = title;
       modalBody.innerHTML = bodyHtml;
@@ -960,11 +1092,6 @@
     }
 
     function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
-    function saveAll() {
-      localStorage.setItem('mis_tareas_opt_notes', JSON.stringify(notes));
-      localStorage.setItem('mis_tareas_opt_tasks', JSON.stringify(tasks));
-      localStorage.setItem('pomodoro_opt_count', pomodoroCount);
-    }
 
     // Render Notas
     function renderNotes() {
@@ -992,14 +1119,14 @@
         { text: 'Guardar', primary: true, onClick: ()=>{
           const newTitle = document.getElementById('editTitle').value.trim();
           const newContent = document.getElementById('editContent').value.trim();
-          if(newTitle) { notes[idx] = { title: newTitle, content: newContent }; saveAll(); renderNotes(); }
+          if(newTitle) { notes[idx] = { title: newTitle, content: newContent }; saveUserData(); renderNotes(); }
         }}
       ]);
     }
 
     function deleteNote(idx) {
       showAlertModal('¿Eliminar esta nota?', true, (confirm) => {
-        if(confirm) { notes.splice(idx,1); saveAll(); renderNotes(); }
+        if(confirm) { notes.splice(idx,1); saveUserData(); renderNotes(); }
       });
     }
 
@@ -1013,7 +1140,7 @@
           const title = document.getElementById('newNoteTitle').value.trim();
           if(!title) { showAlertModal('El título es obligatorio'); return; }
           notes.push({ title, content: document.getElementById('newNoteContent').value.trim() });
-          saveAll(); renderNotes();
+          saveUserData(); renderNotes();
         }}
       ]);
     }
@@ -1043,7 +1170,7 @@
       pomodoroCountSpan.textContent = pomodoroCount;
     }
 
-    // Timer optimizado
+    // Timer
     function updateTimerDisplay() {
       const m = Math.floor(timerSeconds/60).toString().padStart(2,'0');
       const s = (timerSeconds%60).toString().padStart(2,'0');
@@ -1061,7 +1188,7 @@
         if(timerSeconds>0) { timerSeconds--; updateTimerDisplay(); }
         else {
           stopTimer();
-          pomodoroCount++; saveAll(); updateStats();
+          pomodoroCount++; saveUserData(); updateStats();
           showAlertModal('🎉 ¡Tiempo completado!');
           timerStatus.textContent = 'Listo';
           updateTimerDisplay();
@@ -1069,7 +1196,7 @@
       }, 1000);
     }
 
-    // Cambio de vista optimizado
+    // Cambio de vista
     function switchView(view) {
       currentView = view;
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -1082,28 +1209,106 @@
       else fab.style.display = 'flex';
     }
 
-    // Inicialización optimizada
+    // Mostrar selector de usuarios
+    function showUserSwitcher() {
+      const userNames = Object.keys(users);
+      if (userNames.length === 0) {
+        showAlertModal('No hay otros usuarios registrados');
+        return;
+      }
+      
+      let userListHtml = '';
+      userNames.forEach(name => {
+        if (name !== currentUser) {
+          userListHtml += `<span class="user-chip" style="display:block; margin:8px 0; padding:12px; cursor:pointer;" onclick="window.switchToUser('${name}')">${name}</span>`;
+        }
+      });
+      
+      showModal('Cambiar de usuario', `
+        <p style="margin-bottom:16px;">Selecciona un usuario:</p>
+        <div id="tempUserList">${userListHtml}</div>
+      `, [{ text: 'Cancelar' }]);
+      
+      setTimeout(() => {
+        document.querySelectorAll('#tempUserList .user-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            const username = chip.textContent;
+            switchUser(username);
+            hideModal();
+            showMainInterface();
+          });
+        });
+      }, 100);
+    }
+
+    // Exponer función global para el modal
+    window.switchToUser = function(username) {
+      switchUser(username);
+      hideModal();
+      showMainInterface();
+    };
+
+    // Inicialización
     function init() {
-      if(currentUser) { showMainInterface(); } else { welcomeScreen.style.display='flex'; mainInterface.style.display='none'; }
+      // Cargar usuarios
+      const savedUsers = localStorage.getItem('mis_tareas_users');
+      if (savedUsers) {
+        users = JSON.parse(savedUsers);
+      }
+      
+      renderExistingUsers();
+      
+      if(currentUser) { 
+        loadUserData();
+        showMainInterface(); 
+      } else { 
+        welcomeScreen.style.display='flex'; 
+        mainInterface.style.display='none'; 
+      }
       
       document.getElementById('startBtn').addEventListener('click', ()=>{
         const name = document.getElementById('userNameInput').value.trim();
         if(!name) { showAlertModal('Ingresa tu nombre'); return; }
-        currentUser = name; localStorage.setItem('mis_tareas_opt_user', name);
+        
+        // Guardar datos del usuario anterior si existe
+        if (currentUser) {
+          saveUserData();
+        }
+        
+        currentUser = name;
+        if (!users[currentUser]) {
+          users[currentUser] = { notes: [], tasks: [], pomodoroCount: 0 };
+        }
+        loadUserData();
+        localStorage.setItem('mis_tareas_current_user', currentUser);
+        saveUserData();
         showMainInterface();
+        renderExistingUsers();
       });
 
       function showMainInterface() {
         welcomeScreen.style.display='none'; 
         mainInterface.style.display='flex';
-        displayUserName.textContent = currentUser; 
-        userAvatar.textContent = currentUser.charAt(0).toUpperCase();
-        renderNotes(); renderTasks(); updateTimerDisplay(); updateStats();
+        updateUserUI();
+        renderNotes(); 
+        renderTasks(); 
+        updateTimerDisplay(); 
+        updateStats();
       }
 
+      // Avatar click para cambiar usuario
+      userAvatar.addEventListener('click', showUserSwitcher);
+      
       document.getElementById('changeUserBtn').addEventListener('click', ()=>{
-        showAlertModal('¿Cambiar de usuario?', true, (ok)=>{ 
-          if(ok) { currentUser=''; localStorage.removeItem('mis_tareas_opt_user'); welcomeScreen.style.display='flex'; mainInterface.style.display='none'; }
+        showAlertModal('¿Quieres cambiar de usuario o cerrar sesión?', true, (ok)=>{ 
+          if(ok) { 
+            saveUserData();
+            currentUser = ''; 
+            localStorage.removeItem('mis_tareas_current_user'); 
+            welcomeScreen.style.display='flex'; 
+            mainInterface.style.display='none'; 
+            renderExistingUsers();
+          }
         });
       });
 
@@ -1119,7 +1324,7 @@
             { text: 'Cancelar' },
             { text: 'Añadir', primary: true, onClick: ()=>{
               const txt = document.getElementById('quickTaskInput').value.trim();
-              if(txt) { tasks.push({ id: Date.now()+'-'+Math.random(), text: txt, completed: false }); saveAll(); renderTasks(); }
+              if(txt) { tasks.push({ id: Date.now()+'-'+Math.random(), text: txt, completed: false }); saveUserData(); renderTasks(); }
             }}
           ]);
         }
@@ -1129,7 +1334,7 @@
       document.getElementById('addTaskBtn').addEventListener('click', ()=>{
         const txt = newTaskInput.value.trim(); if(!txt) return;
         tasks.push({ id: Date.now()+'-'+Math.random(), text: txt, completed: false });
-        saveAll(); renderTasks(); newTaskInput.value='';
+        saveUserData(); renderTasks(); newTaskInput.value='';
       });
 
       taskListContainer.addEventListener('click', (e)=>{
@@ -1137,8 +1342,8 @@
         if(!trg) return; const row = trg.closest('.task-row'); const id = row.dataset.id;
         const task = tasks.find(t=>t.id===id);
         const action = trg.dataset.action || (trg.classList.contains('task-checkbox')?'toggle':null);
-        if(action==='toggle') { task.completed = !task.completed; saveAll(); renderTasks(); }
-        else if(action==='delete') { tasks = tasks.filter(t=>t.id!==id); saveAll(); renderTasks(); }
+        if(action==='toggle') { task.completed = !task.completed; saveUserData(); renderTasks(); }
+        else if(action==='delete') { tasks = tasks.filter(t=>t.id!==id); saveUserData(); renderTasks(); }
       });
 
       document.querySelectorAll('.filter-chip').forEach(c=> c.addEventListener('click', ()=>{
@@ -1174,10 +1379,10 @@
       });
 
       document.getElementById('clearTasksStatsBtn').addEventListener('click', ()=>{
-        tasks = tasks.filter(t=>!t.completed); saveAll(); renderTasks();
+        tasks = tasks.filter(t=>!t.completed); saveUserData(); renderTasks();
       });
 
-      // Tema oscuro mejorado
+      // Tema oscuro
       let dark = false;
       document.getElementById('themeToggleBtn').addEventListener('click', ()=>{
         dark = !dark;
