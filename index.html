@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Mis Tareas · Móvil</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: #f5f7fb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    /* Modal overlay móvil */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: white;
+      border-radius: 32px 32px 0 0;
+      padding: 28px 24px;
+      max-width: 100%;
+      width: 100%;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+      animation: slideUp 0.25s;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-card h3 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 16px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      font-size: 1rem;
+      margin-bottom: 16px;
+      background: #fafcff;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 14px 24px;
+      border-radius: 40px;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #f1f5f9;
+      color: #1e293b;
+      flex: 1;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+
+    /* App container móvil */
+    .app-container {
+      width: 100%;
+      min-height: 100vh;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Header móvil */
+    .mobile-header {
+      padding: 20px 20px 12px;
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid #f0f4f9;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .user-greeting {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      background: #dbeafe;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #1e4bd2;
+    }
+
+    .greeting-text h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .greeting-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: #f1f5f9;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #475569;
+      cursor: pointer;
+    }
+
+    /* Navegación por pestañas superior */
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      padding: 8px 0;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      background: #f8fafc;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: #3b82f6;
+      color: white;
+    }
+
+    /* Contenido principal scrollable */
+    .main-content {
+      flex: 1;
+      padding: 20px 20px 90px;
+      overflow-y: auto;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* Notas grid móvil */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .note-card {
+      background: #fbfdff;
+      border: 1px solid #eef2f6;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+    }
+
+    .note-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .note-content {
+      color: #334155;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 18px;
+      white-space: pre-wrap;
+    }
+
+    .note-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+      border-top: 1px dashed #d1d9e6;
+      padding-top: 14px;
+    }
+
+    .note-footer button {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 8px 12px;
+    }
+
+    /* Tareas móvil */
+    .task-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .filter-chip {
+      background: #f1f5f9;
+      padding: 10px 18px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      flex: 1;
+      text-align: center;
+    }
+
+    .filter-chip.active {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .task-list {
+      list-style: none;
+    }
+
+    .task-row {
+      display: flex;
+      align-items: center;
+      padding: 18px 4px;
+      border-bottom: 1px solid #ecf1f7;
+      gap: 14px;
+    }
+
+    .task-checkbox {
+      width: 28px;
+      height: 28px;
+      border-radius: 30px;
+      border: 2px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .task-row.completed .task-checkbox {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
+    }
+
+    .task-row.completed .task-text {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+
+    .task-text {
+      flex: 1;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    .task-actions i {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    /* Barra de añadir tarea */
+    .add-task-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .add-task-bar input {
+      flex: 1;
+      padding: 16px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 40px;
+      font-size: 1rem;
+      background: #fafcff;
+    }
+
+    /* Pomodoro móvil */
+    .pomodoro-card {
+      background: #f8fafc;
+      border-radius: 28px;
+      padding: 24px 20px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 24px;
+    }
+
+    .timer-modes {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .timer-mode-btn {
+      padding: 10px 16px;
+      border-radius: 30px;
+      border: none;
+      background: white;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .timer-mode-btn.active {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .timer-display {
+      font-size: 4rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 20px 0;
+      color: #0f172a;
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .timer-btn {
+      background: white;
+      border: 1px solid #cbd5e1;
+      padding: 14px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+      font-size: 1rem;
+    }
+
+    .reminder-section {
+      background: #f1f5f9;
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat-box {
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+
+    /* Barra de navegación inferior */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #eef2f6;
+      padding: 12px 20px 20px;
+      display: flex;
+      justify-content: space-around;
+      backdrop-filter: blur(10px);
+      z-index: 20;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: 0.1s;
+      padding: 8px 16px;
+      border-radius: 30px;
+    }
+
+    .nav-item i {
+      font-size: 1.6rem;
+    }
+
+    .nav-item span {
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .nav-item.active {
+      color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    /* FAB para añadir */
+    .fab-add {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: #3b82f6;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px rgba(59,130,246,0.3);
+      cursor: pointer;
+      border: none;
+      z-index: 15;
+    }
+
+    /* Pantalla bienvenida */
+    .welcome-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+    }
+
+    .welcome-card {
+      width: 100%;
+      background: white;
+      border-radius: 40px;
+      padding: 40px 28px;
+      box-shadow: 0 20px 35px -8px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .welcome-icon {
+      font-size: 4rem;
+      color: #3b82f6;
+      margin-bottom: 20px;
+    }
+
+    .welcome-card h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .input-group {
+      margin: 32px 0 24px;
+      text-align: left;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 18px 20px;
+      font-size: 1.1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 24px;
+      background: #fafcff;
+    }
+
+    /* Utilidades */
+    .empty-message {
+      text-align: center;
+      color: #94a3b8;
+      padding: 48px 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Responsive para tablets */
+    @media (min-width: 640px) {
+      .notes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .app-container {
+        max-width: 480px;
+        margin: 0 auto;
+        box-shadow: 0 0 40px rgba(0,0,0,0.05);
+      }
+      .bottom-nav {
+        max-width: 480px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 30px 30px 0 0;
+      }
+      .fab-add {
+        right: calc(50% - 220px);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container" id="appContainer">
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card" id="modalCard">
+      <h3 id="modalTitle">Título</h3>
+      <div id="modalBody"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <!-- PANTALLA BIENVENIDA -->
+  <div class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-card">
+      <div class="welcome-icon"><i class="fas fa-check-double"></i></div>
+      <h1>Mis Tareas</h1>
+      <p style="color:#64748b; margin-bottom:20px;">Notas, tareas y temporizador</p>
+      <div class="input-group">
+        <label>¿Cómo te llamas?</label>
+        <input type="text" id="userNameInput" placeholder="Ej: Ana" autocomplete="off">
+      </div>
+      <button class="btn-primary" id="startBtn" style="width:100%; padding:18px; border-radius:40px; font-size:1.1rem;">Comenzar</button>
+      <p style="margin-top:20px; color:#94a3b8; font-size:0.9rem;">Tus datos se guardan localmente</p>
+    </div>
+  </div>
+
+  <!-- INTERFAZ PRINCIPAL MÓVIL -->
+  <div id="mainInterface" style="display: none; flex-direction: column; min-height: 100vh;">
+    <!-- Header -->
+    <div class="mobile-header">
+      <div class="header-top">
+        <div class="user-greeting">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="greeting-text">
+            <h2>Hola,</h2>
+            <h1 id="displayUserName">Usuario</h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" id="changeUserBtn"><i class="fas fa-user-edit"></i></button>
+          <button class="icon-btn" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
+        </div>
+      </div>
+      
+      <!-- Tabs superiores rápidas -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-view="notes"><i class="far fa-sticky-note"></i> Notas</button>
+        <button class="tab-btn" data-view="tasks"><i class="far fa-check-circle"></i> Tareas</button>
+        <button class="tab-btn" data-view="pomodoro"><i class="fas fa-hourglass-half"></i> Timer</button>
+      </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+      <!-- Panel Notas -->
+      <div class="panel active" id="notesPanel">
+        <div class="notes-grid" id="notesGrid"></div>
+      </div>
+
+      <!-- Panel Tareas -->
+      <div class="panel" id="tasksPanel">
+        <div class="task-filters">
+          <div class="filter-chip active" data-filter="all">Todas</div>
+          <div class="filter-chip" data-filter="active">Activas</div>
+          <div class="filter-chip" data-filter="completed">Hechas</div>
+        </div>
+        <ul class="task-list" id="taskListContainer"></ul>
+        <div class="add-task-bar">
+          <input type="text" id="newTaskInput" placeholder="Nueva tarea...">
+          <button class="icon-btn" id="addTaskBtn" style="width:56px;"><i class="fas fa-plus"></i></button>
+        </div>
+        
+        <!-- Recordatorio -->
+        <div class="reminder-section">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <div><i class="far fa-bell"></i> <strong>Recordatorio</strong></div>
+            <button id="setReminderBtn" style="background:white; border:none; padding:8px 16px; border-radius:30px;"><i class="far fa-clock"></i> Fijar</button>
+          </div>
+          <p id="reminderMsg" style="margin-top:12px; color:#475569;">No hay recordatorios</p>
+        </div>
+      </div>
+
+      <!-- Panel Pomodoro -->
+      <div class="panel" id="pomodoroPanel">
+        <div class="pomodoro-card">
+          <div class="timer-modes">
+            <button class="timer-mode-btn active" data-time="25">Pomodoro</button>
+            <button class="timer-mode-btn" data-time="5">Descanso</button>
+            <button class="timer-mode-btn" data-time="15">Largo</button>
+          </div>
+          <div class="timer-display" id="timerDisplay">25:00</div>
+          <div class="timer-controls">
+            <button class="timer-btn" id="startTimerBtn"><i class="fas fa-play"></i> Iniciar</button>
+            <button class="timer-btn" id="pauseTimerBtn"><i class="fas fa-pause"></i> Pausa</button>
+          </div>
+          <p style="text-align:center; margin-top:16px; color:#64748b;" id="timerStatus">Listo para enfocarte</p>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-value" id="pomodoroCount">0</div>
+            <div style="color:#64748b;">Sesiones</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="pendingTasksCount">0</div>
+            <div style="color:#64748b;">Pendientes</div>
+          </div>
+        </div>
+        <button class="btn-icon" id="clearTasksStatsBtn" style="margin-top:16px; width:100%; justify-content:center;"><i class="fas fa-broom"></i> Limpiar completadas</button>
+      </div>
+    </div>
+
+    <!-- FAB para añadir nota/tarea -->
+    <button class="fab-add" id="fabAddBtn"><i class="fas fa-plus"></i></button>
+
+    <!-- Barra de navegación inferior -->
+    <div class="bottom-nav">
+      <div class="nav-item active" data-nav="notes"><i class="far fa-sticky-note"></i><span>Notas</span></div>
+      <div class="nav-item" data-nav="tasks"><i class="far fa-check-circle"></i><span>Tareas</span></div>
+      <div class="nav-item" data-nav="pomodoro"><i class="fas fa-hourglass-half"></i><span>Timer</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    'use strict';
+
+    // Estado
+    let currentUser = localStorage.getItem('mis_tareas_movil_user') || '';
+    let notes = JSON.parse(localStorage.getItem('mis_tareas_movil_notes')) || [];
+    let tasks = JSON.parse(localStorage.getItem('mis_tareas_movil_tasks')) || [];
+    let currentTaskFilter = 'all';
+    let pomodoroCount = parseInt(localStorage.getItem('pomodoro_count_movil')) || 0;
+    let currentView = 'notes';
+    
+    // Timer
+    let timerInterval = null;
+    let timerSeconds = 25 * 60;
+    let timerRunning = false;
+
+    // DOM
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const mainInterface = document.getElementById('mainInterface');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalActions = document.getElementById('modalActions');
+    const displayUserName = document.getElementById('displayUserName');
+    const userAvatar = document.getElementById('userAvatar');
+    const notesGrid = document.getElementById('notesGrid');
+    const taskListContainer = document.getElementById('taskListContainer');
+    const newTaskInput = document.getElementById('newTaskInput');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerStatus = document.getElementById('timerStatus');
+    const pomodoroCountSpan = document.getElementById('pomodoroCount');
+    const pendingTasksCountSpan = document.getElementById('pendingTasksCount');
+    const reminderMsg = document.getElementById('reminderMsg');
+
+    // Funciones modales
+    function showModal(title, bodyHtml, actions = []) {
+      modalTitle.textContent = title;
+      modalBody.innerHTML = bodyHtml;
+      modalActions.innerHTML = '';
+      actions.forEach(action => {
+        const btn = document.createElement('button');
+        btn.textContent = action.text;
+        btn.className = 'btn' + (action.primary ? ' btn-primary' : '');
+        btn.addEventListener('click', () => {
+          if (action.onClick) action.onClick();
+          hideModal();
+        });
+        modalActions.appendChild(btn);
+      });
+      modalOverlay.style.display = 'flex';
+    }
+
+    function hideModal() { modalOverlay.style.display = 'none'; }
+    
+    function showAlertModal(message, isConfirm = false, callback) {
+      const actions = isConfirm ? [
+        { text: 'Cancelar' },
+        { text: 'Aceptar', primary: true, onClick: () => { if(callback) callback(true); } }
+      ] : [{ text: 'Aceptar', primary: true }];
+      showModal('Mensaje', `<p style="font-size:1.1rem; padding:10px 0;">${message}</p>`, actions);
+    }
+
+    function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+    function saveAll() {
+      localStorage.setItem('mis_tareas_movil_notes', JSON.stringify(notes));
+      localStorage.setItem('mis_tareas_movil_tasks', JSON.stringify(tasks));
+      localStorage.setItem('pomodoro_count_movil', pomodoroCount);
+    }
+
+    // Render Notas
+    function renderNotes() {
+      if(!notes.length) { notesGrid.innerHTML = '<div class="empty-message"><i class="far fa-file-alt" style="font-size:3rem; opacity:0.3; display:block; margin-bottom:16px;"></i>Sin notas. Toca + para crear</div>'; return; }
+      let h = '';
+      notes.forEach((n,i)=> {
+        h += `<div class="note-card"><div class="note-title">${escapeHtml(n.title)}</div><div class="note-content">${escapeHtml(n.content)}</div>
+        <div class="note-footer"><button data-edit="${i}"><i class="far fa-edit"></i></button><button data-del="${i}"><i class="far fa-trash-alt"></i></button></div></div>`;
+      });
+      notesGrid.innerHTML = h;
+      document.querySelectorAll('[data-edit]').forEach(b=> b.addEventListener('click', ()=> editNoteModal(b.dataset.edit)));
+      document.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> { deleteNote(b.dataset.del); }));
+    }
+
+    function editNoteModal(idx) {
+      const note = notes[idx];
+      showModal('Editar nota', `
+        <input id="editTitle" class="modal-input" value="${escapeHtml(note.title)}" placeholder="Título">
+        <textarea id="editContent" class="modal-input" rows="4" placeholder="Contenido">${escapeHtml(note.content)}</textarea>
+      `, [
+        { text: 'Cancelar' },
+        { text: 'Guardar', primary: true, onClick: ()=>{
+          const newTitle = document.getElementById('editTitle').value.trim();
+          const newContent = document.getElementById('editContent').value.trim();
+          if(newTitle) { notes[idx] = { title: newTitle, content: newContent }; saveAll(); renderNotes(); }
+        }}
+      ]);
+    }
+
+    function deleteNote(idx) {
+      showAlertModal('¿Eliminar esta nota?', true, (confirm) => {
+        if(confirm) { notes.splice(idx,1); saveAll(); renderNotes(); }
+      });
+    }
+
+    function createNoteModal() {
+      showModal('Nueva nota', `
+        <input id="newNoteTitle" class="modal-input" placeholder="Título">
+        <textarea id="newNoteContent" class="modal-input" rows="4" placeholder="Contenido (opcional)"></textarea>
+      `, [
+        { text: 'Cancelar' },
+        { text: 'Crear', primary: true, onClick: ()=>{
+          const title = document.getElementById('newNoteTitle').value.trim();
+          if(!title) { showAlertModal('El título es obligatorio'); return; }
+          notes.push({ title, content: document.getElementById('newNoteContent').value.trim() });
+          saveAll(); renderNotes();
+        }}
+      ]);
+    }
+
+    // Tareas
+    function renderTasks() {
+      let filtered = tasks;
+      if(currentTaskFilter==='active') filtered = tasks.filter(t=>!t.completed);
+      else if(currentTaskFilter==='completed') filtered = tasks.filter(t=>t.completed);
+      if(!filtered.length) { taskListContainer.innerHTML = '<div class="empty-message">No hay tareas</div>'; }
+      else {
+        let h = '';
+        filtered.forEach(t=> {
+          h += `<li class="task-row ${t.completed?'completed':''}" data-id="${t.id}">
+            <div class="task-checkbox" data-action="toggle">${t.completed?'<i class="fas fa-check"></i>':''}</div>
+            <span class="task-text">${escapeHtml(t.text)}</span>
+            <div class="task-actions"><i class="far fa-trash-alt" data-action="delete"></i></div>
+          </li>`;
+        });
+        taskListContainer.innerHTML = h;
+      }
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('pendingTasksCount').textContent = tasks.filter(t=>!t.completed).length;
+      pomodoroCountSpan.textContent = pomodoroCount;
+    }
+
+    // Timer
+    function updateTimerDisplay() {
+      const m = Math.floor(timerSeconds/60).toString().padStart(2,'0');
+      const s = (timerSeconds%60).toString().padStart(2,'0');
+      timerDisplay.textContent = `${m}:${s}`;
+    }
+
+    function stopTimer() { if(timerInterval) clearInterval(timerInterval); timerRunning = false; timerInterval = null; }
+    
+    function startTimer() {
+      if(timerRunning) return;
+      if(timerSeconds <=0) timerSeconds = 25*60;
+      timerRunning = true;
+      timerStatus.textContent = '⏳ En progreso...';
+      timerInterval = setInterval(()=> {
+        if(timerSeconds>0) { timerSeconds--; updateTimerDisplay(); }
+        else {
+          stopTimer();
+          pomodoroCount++; saveAll(); updateStats();
+          showAlertModal('🎉 ¡Tiempo completado!');
+          timerStatus.textContent = 'Listo';
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    // Cambio de vista
+    function switchView(view) {
+      currentView = view;
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById(view+'Panel').classList.add('active');
+      document.querySelectorAll('.tab-btn').forEach(b=>{ b.classList.remove('active'); if(b.dataset.view===view) b.classList.add('active'); });
+      document.querySelectorAll('.nav-item').forEach(n=>{ n.classList.remove('active'); if(n.dataset.nav===view) n.classList.add('active'); });
+      
+      // Actualizar FAB
+      const fab = document.getElementById('fabAddBtn');
+      if(view === 'notes') fab.innerHTML = '<i class="fas fa-plus"></i> Nota';
+      else if(view === 'tasks') fab.innerHTML = '<i class="fas fa-plus"></i> Tarea';
+      else fab.style.display = 'none';
+      if(view !== 'pomodoro') fab.style.display = 'flex';
+    }
+
+    // Inicialización
+    function init() {
+      if(currentUser) { showMainInterface(); } else { welcomeScreen.style.display='flex'; mainInterface.style.display='none'; }
+      
+      document.getElementById('startBtn').addEventListener('click', ()=>{
+        const name = document.getElementById('userNameInput').value.trim();
+        if(!name) { showAlertModal('Ingresa tu nombre'); return; }
+        currentUser = name; localStorage.setItem('mis_tareas_movil_user', name);
+        showMainInterface();
+      });
+
+      function showMainInterface() {
+        welcomeScreen.style.display='none'; 
+        mainInterface.style.display='flex';
+        displayUserName.textContent = currentUser; 
+        userAvatar.textContent = currentUser.charAt(0).toUpperCase();
+        renderNotes(); renderTasks(); updateTimerDisplay(); updateStats();
+      }
+
+      document.getElementById('changeUserBtn').addEventListener('click', ()=>{
+        showAlertModal('¿Cambiar de usuario?', true, (ok)=>{ 
+          if(ok) { currentUser=''; localStorage.removeItem('mis_tareas_movil_user'); welcomeScreen.style.display='flex'; mainInterface.style.display='none'; }
+        });
+      });
+
+      // Navegación
+      document.querySelectorAll('.tab-btn').forEach(b=> b.addEventListener('click', ()=> switchView(b.dataset.view)));
+      document.querySelectorAll('.nav-item').forEach(n=> n.addEventListener('click', ()=> switchView(n.dataset.nav)));
+      
+      // FAB
+      document.getElementById('fabAddBtn').addEventListener('click', ()=>{
+        if(currentView === 'notes') createNoteModal();
+        else if(currentView === 'tasks') {
+          newTaskInput.focus();
+          showModal('Nueva tarea', '<input id="quickTaskInput" class="modal-input" placeholder="¿Qué necesitas hacer?">', [
+            { text: 'Cancelar' },
+            { text: 'Añadir', primary: true, onClick: ()=>{
+              const txt = document.getElementById('quickTaskInput').value.trim();
+              if(txt) { tasks.push({ id: Date.now()+'-'+Math.random(), text: txt, completed: false }); saveAll(); renderTasks(); }
+            }}
+          ]);
+        }
+      });
+
+      // Tareas
+      document.getElementById('addTaskBtn').addEventListener('click', ()=>{
+        const txt = newTaskInput.value.trim(); if(!txt) return;
+        tasks.push({ id: Date.now()+'-'+Math.random(), text: txt, completed: false });
+        saveAll(); renderTasks(); newTaskInput.value='';
+      });
+
+      taskListContainer.addEventListener('click', (e)=>{
+        const trg = e.target.closest('[data-action]') || e.target.closest('.task-checkbox');
+        if(!trg) return; const row = trg.closest('.task-row'); const id = row.dataset.id;
+        const task = tasks.find(t=>t.id===id);
+        const action = trg.dataset.action || (trg.classList.contains('task-checkbox')?'toggle':null);
+        if(action==='toggle') { task.completed = !task.completed; saveAll(); renderTasks(); }
+        else if(action==='delete') { tasks = tasks.filter(t=>t.id!==id); saveAll(); renderTasks(); }
+      });
+
+      document.querySelectorAll('.filter-chip').forEach(c=> c.addEventListener('click', ()=>{
+        currentTaskFilter = c.dataset.filter;
+        document.querySelectorAll('.filter-chip').forEach(ch=>ch.classList.remove('active')); c.classList.add('active');
+        renderTasks();
+      }));
+
+      // Timer
+      document.getElementById('startTimerBtn').addEventListener('click', startTimer);
+      document.getElementById('pauseTimerBtn').addEventListener('click', ()=>{ stopTimer(); timerStatus.textContent='Pausado'; });
+      document.querySelectorAll('.timer-mode-btn').forEach(b=> b.addEventListener('click', ()=>{
+        document.querySelectorAll('.timer-mode-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+        const mins = parseInt(b.dataset.time);
+        stopTimer(); timerSeconds = mins*60; updateTimerDisplay();
+      }));
+
+      document.getElementById('setReminderBtn').addEventListener('click', ()=>{
+        showModal('Recordatorio', `<input id="reminderText" class="modal-input" placeholder="ej: Revisar informe"><input id="reminderMinutes" class="modal-input" type="number" value="5" placeholder="Minutos">`, [
+          { text: 'Cancelar' },
+          { text: 'Programar', primary: true, onClick: ()=>{
+            const msg = document.getElementById('reminderText').value;
+            const mins = parseInt(document.getElementById('reminderMinutes').value);
+            if(!msg || mins<1) return;
+            reminderMsg.textContent = `"${msg}" en ${mins} min`;
+            setTimeout(()=> { showAlertModal(`🔔 Recordatorio: ${msg}`); reminderMsg.textContent = 'No hay recordatorios'; }, mins*60000);
+          }}
+        ]);
+      });
+
+      document.getElementById('clearTasksStatsBtn').addEventListener('click', ()=>{
+        tasks = tasks.filter(t=>!t.completed); saveAll(); renderTasks();
+      });
+
+      // Tema oscuro simple
+      let dark = false;
+      document.getElementById('themeToggleBtn').addEventListener('click', ()=>{
+        dark = !dark;
+        document.body.style.filter = dark ? 'invert(0.9) hue-rotate(180deg)' : 'none';
+      });
+    }
+
+    init();
+  })();
+</script>
+</body>
+</html>
