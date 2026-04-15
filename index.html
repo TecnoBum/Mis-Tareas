@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>Mis Tareas · Móvil</title>
+  <title>Mis Tareas · Productividad</title>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Fuente -->
+  <!-- Fuente Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <style>
     * {
@@ -17,35 +17,42 @@
     }
 
     body {
-      font-family: "Inter", sans-serif;
-      background: #f5f7fb;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
+      transition: background 0.3s ease;
     }
 
-    /* Modal overlay móvil */
+    /* Modal optimizado */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
       display: none;
       align-items: flex-end;
       justify-content: center;
       z-index: 1000;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .modal-card {
       background: white;
-      border-radius: 32px 32px 0 0;
-      padding: 28px 24px;
+      border-radius: 32px 32px 24px 24px;
+      padding: 32px 24px;
       max-width: 100%;
       width: 100%;
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
-      animation: slideUp 0.25s;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @keyframes slideUp {
@@ -54,31 +61,46 @@
     }
 
     .modal-card h3 {
-      font-size: 1.6rem;
-      margin-bottom: 20px;
-      color: #0f172a;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #1a1a2e;
+      letter-spacing: -0.02em;
     }
 
     .modal-input {
       width: 100%;
       padding: 16px 18px;
       border: 2px solid #e2e8f0;
-      border-radius: 20px;
+      border-radius: 16px;
       font-size: 1rem;
       margin-bottom: 16px;
       background: #fafcff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: "Inter", sans-serif;
+    }
+
+    .modal-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea.modal-input {
+      resize: vertical;
+      min-height: 100px;
     }
 
     .modal-actions {
       display: flex;
       gap: 12px;
       justify-content: flex-end;
-      margin-top: 20px;
+      margin-top: 24px;
     }
 
     .btn {
       padding: 14px 24px;
-      border-radius: 40px;
+      border-radius: 14px;
       border: none;
       font-weight: 600;
       font-size: 1rem;
@@ -86,103 +108,127 @@
       background: #f1f5f9;
       color: #1e293b;
       flex: 1;
+      transition: all 0.2s ease;
+      font-family: "Inter", sans-serif;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
     }
 
     .btn-primary {
-      background: #3b82f6;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
-    /* App container móvil */
+    .btn-primary:active {
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    }
+
+    /* App container optimizado */
     .app-container {
       width: 100%;
       min-height: 100vh;
-      background: white;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
       display: flex;
       flex-direction: column;
       position: relative;
     }
 
-    /* Header móvil */
+    /* Header mejorado */
     .mobile-header {
-      padding: 20px 20px 12px;
-      background: white;
+      padding: 20px 20px 16px;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(20px);
       position: sticky;
       top: 0;
       z-index: 10;
-      border-bottom: 1px solid #f0f4f9;
+      border-bottom: 1px solid rgba(102, 126, 234, 0.1);
     }
 
     .header-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .user-greeting {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
     .user-avatar {
-      width: 48px;
-      height: 48px;
-      background: #dbeafe;
-      border-radius: 40px;
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 1.3rem;
-      color: #1e4bd2;
+      font-size: 1.4rem;
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
     }
 
     .greeting-text h2 {
-      font-size: 1.2rem;
-      font-weight: 600;
+      font-size: 1rem;
+      font-weight: 500;
       color: #64748b;
+      letter-spacing: -0.01em;
     }
 
     .greeting-text h1 {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 700;
-      color: #0f172a;
+      color: #1a1a2e;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
     }
 
     .header-actions {
       display: flex;
-      gap: 8px;
+      gap: 10px;
     }
 
     .icon-btn {
-      background: #f1f5f9;
-      border: none;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(102, 126, 234, 0.1);
       width: 48px;
       height: 48px;
-      border-radius: 30px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.3rem;
-      color: #475569;
+      color: #667eea;
       cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
-    /* Navegación por pestañas superior */
+    .icon-btn:active {
+      transform: scale(0.95);
+      background: #f8fafc;
+    }
+
+    /* Tabs optimizadas */
     .tab-nav {
       display: flex;
-      gap: 8px;
-      padding: 8px 0;
+      gap: 10px;
+      padding: 4px 0;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 12px;
-      background: #f8fafc;
-      border: none;
-      border-radius: 30px;
+      padding: 14px 12px;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      border-radius: 16px;
       font-weight: 600;
       color: #64748b;
       cursor: pointer;
@@ -191,29 +237,47 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .tab-btn i {
+      font-size: 1.1rem;
     }
 
     .tab-btn.active {
-      background: #3b82f6;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
-    /* Contenido principal scrollable */
+    .tab-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Contenido principal */
     .main-content {
       flex: 1;
-      padding: 20px 20px 90px;
+      padding: 24px 20px 100px;
       overflow-y: auto;
     }
 
     .panel {
       display: none;
+      animation: panelFade 0.3s ease;
+    }
+
+    @keyframes panelFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .panel.active {
       display: block;
     }
 
-    /* Notas grid móvil */
+    /* Notas mejoradas */
     .notes-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -221,65 +285,90 @@
     }
 
     .note-card {
-      background: #fbfdff;
-      border: 1px solid #eef2f6;
+      background: white;
+      border: 1px solid rgba(102, 126, 234, 0.1);
       border-radius: 24px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+      padding: 22px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .note-card:active {
+      transform: scale(0.99);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .note-title {
       font-weight: 700;
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: #0f172a;
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #1a1a2e;
+      letter-spacing: -0.01em;
     }
 
     .note-content {
-      color: #334155;
+      color: #475569;
       font-size: 0.95rem;
-      line-height: 1.5;
-      margin-bottom: 18px;
+      line-height: 1.6;
+      margin-bottom: 20px;
       white-space: pre-wrap;
     }
 
     .note-footer {
       display: flex;
       justify-content: flex-end;
-      gap: 16px;
-      border-top: 1px dashed #d1d9e6;
-      padding-top: 14px;
+      gap: 12px;
+      border-top: 1px solid rgba(102, 126, 234, 0.1);
+      padding-top: 16px;
+      margin-top: 4px;
     }
 
     .note-footer button {
       background: none;
       border: none;
-      color: #64748b;
+      color: #667eea;
       font-size: 1.2rem;
       cursor: pointer;
       padding: 8px 12px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
     }
 
-    /* Tareas móvil */
+    .note-footer button:active {
+      background: rgba(102, 126, 234, 0.1);
+    }
+
+    /* Tareas mejoradas */
     .task-filters {
       display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
+      gap: 10px;
+      margin-bottom: 24px;
     }
 
     .filter-chip {
-      background: #f1f5f9;
-      padding: 10px 18px;
-      border-radius: 40px;
+      background: white;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      padding: 12px 16px;
+      border-radius: 16px;
       font-size: 0.9rem;
+      font-weight: 600;
       cursor: pointer;
       flex: 1;
       text-align: center;
+      color: #64748b;
+      transition: all 0.2s ease;
     }
 
     .filter-chip.active {
-      background: #3b82f6;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    .filter-chip:active {
+      transform: scale(0.97);
     }
 
     .task-list {
@@ -289,26 +378,33 @@
     .task-row {
       display: flex;
       align-items: center;
-      padding: 18px 4px;
-      border-bottom: 1px solid #ecf1f7;
-      gap: 14px;
+      padding: 18px 8px;
+      border-bottom: 1px solid rgba(102, 126, 234, 0.08);
+      gap: 16px;
+      transition: all 0.2s ease;
+      border-radius: 16px;
+    }
+
+    .task-row:active {
+      background: rgba(102, 126, 234, 0.05);
     }
 
     .task-checkbox {
       width: 28px;
       height: 28px;
-      border-radius: 30px;
+      border-radius: 10px;
       border: 2px solid #cbd5e1;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       flex-shrink: 0;
+      transition: all 0.2s ease;
     }
 
     .task-row.completed .task-checkbox {
-      background: #3b82f6;
-      border-color: #3b82f6;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: transparent;
       color: white;
     }
 
@@ -321,69 +417,98 @@
       flex: 1;
       font-size: 1.05rem;
       font-weight: 500;
-      color: #1e293b;
+      color: #1a1a2e;
     }
 
     .task-actions i {
       font-size: 1.2rem;
-      color: #94a3b8;
+      color: #ef4444;
       cursor: pointer;
       padding: 8px;
+      opacity: 0.7;
+      transition: all 0.2s ease;
     }
 
-    /* Barra de añadir tarea */
+    .task-actions i:active {
+      opacity: 1;
+      transform: scale(0.9);
+    }
+
+    /* Barra añadir tarea */
     .add-task-bar {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       margin-top: 24px;
     }
 
     .add-task-bar input {
       flex: 1;
       padding: 16px 18px;
-      border: 2px solid #e2e8f0;
-      border-radius: 40px;
+      border: 2px solid rgba(102, 126, 234, 0.1);
+      border-radius: 16px;
       font-size: 1rem;
-      background: #fafcff;
+      background: white;
+      transition: all 0.2s ease;
+      font-family: "Inter", sans-serif;
     }
 
-    /* Pomodoro móvil */
+    .add-task-bar input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .add-task-bar .icon-btn {
+      width: 56px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+    }
+
+    /* Pomodoro mejorado */
     .pomodoro-card {
-      background: #f8fafc;
-      border-radius: 28px;
-      padding: 24px 20px;
-      border: 1px solid #e2e8f0;
+      background: white;
+      border-radius: 32px;
+      padding: 32px 24px;
+      border: 1px solid rgba(102, 126, 234, 0.1);
       margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
     }
 
     .timer-modes {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       justify-content: center;
-      margin-bottom: 20px;
+      margin-bottom: 28px;
     }
 
     .timer-mode-btn {
-      padding: 10px 16px;
-      border-radius: 30px;
-      border: none;
+      padding: 12px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(102, 126, 234, 0.1);
       background: white;
       font-weight: 600;
       cursor: pointer;
       flex: 1;
+      color: #64748b;
+      transition: all 0.2s ease;
     }
 
     .timer-mode-btn.active {
-      background: #3b82f6;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
     .timer-display {
-      font-size: 4rem;
+      font-size: 5rem;
       font-weight: 700;
       text-align: center;
       margin: 20px 0;
-      color: #0f172a;
+      color: #1a1a2e;
+      letter-spacing: -0.02em;
+      font-feature-settings: "tnum";
     }
 
     .timer-controls {
@@ -394,54 +519,72 @@
 
     .timer-btn {
       background: white;
-      border: 1px solid #cbd5e1;
-      padding: 14px 24px;
-      border-radius: 40px;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      padding: 16px 24px;
+      border-radius: 16px;
       font-weight: 600;
       cursor: pointer;
       flex: 1;
       font-size: 1rem;
+      color: #1a1a2e;
+      transition: all 0.2s ease;
+    }
+
+    .timer-btn:active {
+      transform: scale(0.97);
+      background: #f8fafc;
+    }
+
+    .timer-btn i {
+      margin-right: 8px;
+      color: #667eea;
     }
 
     .reminder-section {
-      background: #f1f5f9;
-      border-radius: 20px;
-      padding: 20px;
-      margin-top: 20px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-radius: 24px;
+      padding: 24px;
+      margin-top: 24px;
+      border: 1px solid rgba(102, 126, 234, 0.1);
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 20px;
+      gap: 16px;
+      margin-top: 24px;
     }
 
     .stat-box {
-      background: #f8fafc;
-      border-radius: 20px;
-      padding: 20px;
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
       text-align: center;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
 
     .stat-value {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: 700;
-      color: #3b82f6;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    /* Barra de navegación inferior */
+    /* Barra de navegación inferior mejorada */
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: white;
-      border-top: 1px solid #eef2f6;
-      padding: 12px 20px 20px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(102, 126, 234, 0.1);
+      padding: 12px 20px 24px;
       display: flex;
       justify-content: space-around;
-      backdrop-filter: blur(10px);
       z-index: 20;
     }
 
@@ -452,9 +595,9 @@
       gap: 4px;
       color: #94a3b8;
       cursor: pointer;
-      transition: 0.1s;
-      padding: 8px 16px;
-      border-radius: 30px;
+      transition: all 0.2s ease;
+      padding: 8px 20px;
+      border-radius: 40px;
     }
 
     .nav-item i {
@@ -463,95 +606,130 @@
 
     .nav-item span {
       font-size: 0.75rem;
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .nav-item.active {
-      color: #3b82f6;
-      background: #eff6ff;
+      color: #667eea;
+      background: rgba(102, 126, 234, 0.1);
     }
 
-    /* FAB para añadir */
+    .nav-item:active {
+      transform: scale(0.95);
+    }
+
+    /* FAB optimizado */
     .fab-add {
       position: fixed;
-      bottom: 90px;
+      bottom: 100px;
       right: 20px;
-      width: 60px;
-      height: 60px;
-      background: #3b82f6;
-      border-radius: 40px;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-size: 1.8rem;
-      box-shadow: 0 8px 20px rgba(59,130,246,0.3);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
       cursor: pointer;
       border: none;
       z-index: 15;
+      transition: all 0.2s ease;
     }
 
-    /* Pantalla bienvenida */
+    .fab-add:active {
+      transform: scale(0.9);
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Pantalla bienvenida mejorada */
     .welcome-screen {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
     .welcome-card {
       width: 100%;
-      background: white;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
       border-radius: 40px;
-      padding: 40px 28px;
-      box-shadow: 0 20px 35px -8px rgba(0,0,0,0.05);
+      padding: 48px 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
       text-align: center;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     .welcome-icon {
-      font-size: 4rem;
-      color: #3b82f6;
-      margin-bottom: 20px;
+      font-size: 4.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
     }
 
     .welcome-card h1 {
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       font-weight: 700;
-      color: #0f172a;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
     }
 
     .input-group {
-      margin: 32px 0 24px;
+      margin: 36px 0 28px;
       text-align: left;
     }
 
     .input-group label {
       font-weight: 600;
-      color: #1e293b;
-      margin-bottom: 8px;
+      color: #1a1a2e;
+      margin-bottom: 10px;
       display: block;
+      font-size: 1rem;
     }
 
     .input-group input {
       width: 100%;
       padding: 18px 20px;
       font-size: 1.1rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 24px;
-      background: #fafcff;
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      border-radius: 20px;
+      background: white;
+      transition: all 0.2s ease;
+      font-family: "Inter", sans-serif;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
     }
 
     /* Utilidades */
     .empty-message {
       text-align: center;
       color: #94a3b8;
-      padding: 48px 20px;
+      padding: 56px 20px;
       font-size: 1.1rem;
     }
 
-    /* Responsive para tablets */
+    .empty-message i {
+      font-size: 4rem;
+      opacity: 0.3;
+      margin-bottom: 16px;
+      color: #667eea;
+    }
+
+    /* Responsive */
     @media (min-width: 640px) {
       .notes-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -559,7 +737,8 @@
       .app-container {
         max-width: 480px;
         margin: 0 auto;
-        box-shadow: 0 0 40px rgba(0,0,0,0.05);
+        border-radius: 32px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
       }
       .bottom-nav {
         max-width: 480px;
@@ -570,12 +749,32 @@
       .fab-add {
         right: calc(50% - 220px);
       }
+      body {
+        padding: 16px;
+      }
+      .app-container {
+        min-height: calc(100vh - 32px);
+      }
+    }
+
+    /* Scrollbar personalizada */
+    .main-content::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .main-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .main-content::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.2);
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
 <div class="app-container" id="appContainer">
-  <!-- MODAL -->
+  <!-- MODAL OPTIMIZADO -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal-card" id="modalCard">
       <h3 id="modalTitle">Título</h3>
@@ -589,17 +788,17 @@
     <div class="welcome-card">
       <div class="welcome-icon"><i class="fas fa-check-double"></i></div>
       <h1>Mis Tareas</h1>
-      <p style="color:#64748b; margin-bottom:20px;">Notas, tareas y temporizador</p>
+      <p style="color:#64748b; margin-bottom:20px; font-size:1.1rem;">Notas, tareas y temporizador</p>
       <div class="input-group">
         <label>¿Cómo te llamas?</label>
         <input type="text" id="userNameInput" placeholder="Ej: Ana" autocomplete="off">
       </div>
-      <button class="btn-primary" id="startBtn" style="width:100%; padding:18px; border-radius:40px; font-size:1.1rem;">Comenzar</button>
-      <p style="margin-top:20px; color:#94a3b8; font-size:0.9rem;">Tus datos se guardan localmente</p>
+      <button class="btn-primary" id="startBtn" style="width:100%; padding:18px; border-radius:20px; font-size:1.1rem;">Comenzar</button>
+      <p style="margin-top:24px; color:#94a3b8; font-size:0.9rem;">Tus datos se guardan localmente</p>
     </div>
   </div>
 
-  <!-- INTERFAZ PRINCIPAL MÓVIL -->
+  <!-- INTERFAZ PRINCIPAL -->
   <div id="mainInterface" style="display: none; flex-direction: column; min-height: 100vh;">
     <!-- Header -->
     <div class="mobile-header">
@@ -617,7 +816,7 @@
         </div>
       </div>
       
-      <!-- Tabs superiores rápidas -->
+      <!-- Tabs -->
       <div class="tab-nav">
         <button class="tab-btn active" data-view="notes"><i class="far fa-sticky-note"></i> Notas</button>
         <button class="tab-btn" data-view="tasks"><i class="far fa-check-circle"></i> Tareas</button>
@@ -625,7 +824,7 @@
       </div>
     </div>
 
-    <!-- Contenido principal -->
+    <!-- Contenido -->
     <div class="main-content">
       <!-- Panel Notas -->
       <div class="panel active" id="notesPanel">
@@ -642,16 +841,16 @@
         <ul class="task-list" id="taskListContainer"></ul>
         <div class="add-task-bar">
           <input type="text" id="newTaskInput" placeholder="Nueva tarea...">
-          <button class="icon-btn" id="addTaskBtn" style="width:56px;"><i class="fas fa-plus"></i></button>
+          <button class="icon-btn" id="addTaskBtn"><i class="fas fa-plus"></i></button>
         </div>
         
         <!-- Recordatorio -->
         <div class="reminder-section">
           <div style="display:flex; align-items:center; justify-content:space-between;">
-            <div><i class="far fa-bell"></i> <strong>Recordatorio</strong></div>
-            <button id="setReminderBtn" style="background:white; border:none; padding:8px 16px; border-radius:30px;"><i class="far fa-clock"></i> Fijar</button>
+            <div><i class="far fa-bell"></i> <strong style="color:#1a1a2e;">Recordatorio</strong></div>
+            <button id="setReminderBtn" style="background:white; border:none; padding:10px 18px; border-radius:16px; font-weight:600; color:#667eea; cursor:pointer;"><i class="far fa-clock"></i> Fijar</button>
           </div>
-          <p id="reminderMsg" style="margin-top:12px; color:#475569;">No hay recordatorios</p>
+          <p id="reminderMsg" style="margin-top:16px; color:#475569;">No hay recordatorios</p>
         </div>
       </div>
 
@@ -665,30 +864,30 @@
           </div>
           <div class="timer-display" id="timerDisplay">25:00</div>
           <div class="timer-controls">
-            <button class="timer-btn" id="startTimerBtn"><i class="fas fa-play"></i> Iniciar</button>
-            <button class="timer-btn" id="pauseTimerBtn"><i class="fas fa-pause"></i> Pausa</button>
+            <button class="timer-btn" id="startTimerBtn"><i class="fas fa-play"></i>Iniciar</button>
+            <button class="timer-btn" id="pauseTimerBtn"><i class="fas fa-pause"></i>Pausa</button>
           </div>
-          <p style="text-align:center; margin-top:16px; color:#64748b;" id="timerStatus">Listo para enfocarte</p>
+          <p style="text-align:center; margin-top:20px; color:#64748b;" id="timerStatus">Listo para enfocarte</p>
         </div>
         
         <div class="stats-grid">
           <div class="stat-box">
             <div class="stat-value" id="pomodoroCount">0</div>
-            <div style="color:#64748b;">Sesiones</div>
+            <div style="color:#64748b; font-weight:500;">Sesiones</div>
           </div>
           <div class="stat-box">
             <div class="stat-value" id="pendingTasksCount">0</div>
-            <div style="color:#64748b;">Pendientes</div>
+            <div style="color:#64748b; font-weight:500;">Pendientes</div>
           </div>
         </div>
-        <button class="btn-icon" id="clearTasksStatsBtn" style="margin-top:16px; width:100%; justify-content:center;"><i class="fas fa-broom"></i> Limpiar completadas</button>
+        <button class="btn" id="clearTasksStatsBtn" style="margin-top:20px; width:100%; background:white; border:1px solid rgba(102,126,234,0.2);"><i class="fas fa-broom"></i> Limpiar completadas</button>
       </div>
     </div>
 
-    <!-- FAB para añadir nota/tarea -->
+    <!-- FAB -->
     <button class="fab-add" id="fabAddBtn"><i class="fas fa-plus"></i></button>
 
-    <!-- Barra de navegación inferior -->
+    <!-- Bottom Nav -->
     <div class="bottom-nav">
       <div class="nav-item active" data-nav="notes"><i class="far fa-sticky-note"></i><span>Notas</span></div>
       <div class="nav-item" data-nav="tasks"><i class="far fa-check-circle"></i><span>Tareas</span></div>
@@ -701,12 +900,12 @@
   (function(){
     'use strict';
 
-    // Estado
-    let currentUser = localStorage.getItem('mis_tareas_movil_user') || '';
-    let notes = JSON.parse(localStorage.getItem('mis_tareas_movil_notes')) || [];
-    let tasks = JSON.parse(localStorage.getItem('mis_tareas_movil_tasks')) || [];
+    // Estado optimizado
+    let currentUser = localStorage.getItem('mis_tareas_opt_user') || '';
+    let notes = JSON.parse(localStorage.getItem('mis_tareas_opt_notes')) || [];
+    let tasks = JSON.parse(localStorage.getItem('mis_tareas_opt_tasks')) || [];
     let currentTaskFilter = 'all';
-    let pomodoroCount = parseInt(localStorage.getItem('pomodoro_count_movil')) || 0;
+    let pomodoroCount = parseInt(localStorage.getItem('pomodoro_opt_count')) || 0;
     let currentView = 'notes';
     
     // Timer
@@ -732,7 +931,7 @@
     const pendingTasksCountSpan = document.getElementById('pendingTasksCount');
     const reminderMsg = document.getElementById('reminderMsg');
 
-    // Funciones modales
+    // Funciones modales optimizadas
     function showModal(title, bodyHtml, actions = []) {
       modalTitle.textContent = title;
       modalBody.innerHTML = bodyHtml;
@@ -762,14 +961,17 @@
 
     function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
     function saveAll() {
-      localStorage.setItem('mis_tareas_movil_notes', JSON.stringify(notes));
-      localStorage.setItem('mis_tareas_movil_tasks', JSON.stringify(tasks));
-      localStorage.setItem('pomodoro_count_movil', pomodoroCount);
+      localStorage.setItem('mis_tareas_opt_notes', JSON.stringify(notes));
+      localStorage.setItem('mis_tareas_opt_tasks', JSON.stringify(tasks));
+      localStorage.setItem('pomodoro_opt_count', pomodoroCount);
     }
 
     // Render Notas
     function renderNotes() {
-      if(!notes.length) { notesGrid.innerHTML = '<div class="empty-message"><i class="far fa-file-alt" style="font-size:3rem; opacity:0.3; display:block; margin-bottom:16px;"></i>Sin notas. Toca + para crear</div>'; return; }
+      if(!notes.length) { 
+        notesGrid.innerHTML = '<div class="empty-message"><i class="far fa-file-alt"></i><br>Sin notas. Toca + para crear</div>'; 
+        return; 
+      }
       let h = '';
       notes.forEach((n,i)=> {
         h += `<div class="note-card"><div class="note-title">${escapeHtml(n.title)}</div><div class="note-content">${escapeHtml(n.content)}</div>
@@ -837,11 +1039,11 @@
     }
 
     function updateStats() {
-      document.getElementById('pendingTasksCount').textContent = tasks.filter(t=>!t.completed).length;
+      pendingTasksCountSpan.textContent = tasks.filter(t=>!t.completed).length;
       pomodoroCountSpan.textContent = pomodoroCount;
     }
 
-    // Timer
+    // Timer optimizado
     function updateTimerDisplay() {
       const m = Math.floor(timerSeconds/60).toString().padStart(2,'0');
       const s = (timerSeconds%60).toString().padStart(2,'0');
@@ -867,7 +1069,7 @@
       }, 1000);
     }
 
-    // Cambio de vista
+    // Cambio de vista optimizado
     function switchView(view) {
       currentView = view;
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -875,22 +1077,19 @@
       document.querySelectorAll('.tab-btn').forEach(b=>{ b.classList.remove('active'); if(b.dataset.view===view) b.classList.add('active'); });
       document.querySelectorAll('.nav-item').forEach(n=>{ n.classList.remove('active'); if(n.dataset.nav===view) n.classList.add('active'); });
       
-      // Actualizar FAB
       const fab = document.getElementById('fabAddBtn');
-      if(view === 'notes') fab.innerHTML = '<i class="fas fa-plus"></i> Nota';
-      else if(view === 'tasks') fab.innerHTML = '<i class="fas fa-plus"></i> Tarea';
-      else fab.style.display = 'none';
-      if(view !== 'pomodoro') fab.style.display = 'flex';
+      if(view === 'pomodoro') fab.style.display = 'none';
+      else fab.style.display = 'flex';
     }
 
-    // Inicialización
+    // Inicialización optimizada
     function init() {
       if(currentUser) { showMainInterface(); } else { welcomeScreen.style.display='flex'; mainInterface.style.display='none'; }
       
       document.getElementById('startBtn').addEventListener('click', ()=>{
         const name = document.getElementById('userNameInput').value.trim();
         if(!name) { showAlertModal('Ingresa tu nombre'); return; }
-        currentUser = name; localStorage.setItem('mis_tareas_movil_user', name);
+        currentUser = name; localStorage.setItem('mis_tareas_opt_user', name);
         showMainInterface();
       });
 
@@ -904,7 +1103,7 @@
 
       document.getElementById('changeUserBtn').addEventListener('click', ()=>{
         showAlertModal('¿Cambiar de usuario?', true, (ok)=>{ 
-          if(ok) { currentUser=''; localStorage.removeItem('mis_tareas_movil_user'); welcomeScreen.style.display='flex'; mainInterface.style.display='none'; }
+          if(ok) { currentUser=''; localStorage.removeItem('mis_tareas_opt_user'); welcomeScreen.style.display='flex'; mainInterface.style.display='none'; }
         });
       });
 
@@ -916,7 +1115,6 @@
       document.getElementById('fabAddBtn').addEventListener('click', ()=>{
         if(currentView === 'notes') createNoteModal();
         else if(currentView === 'tasks') {
-          newTaskInput.focus();
           showModal('Nueva tarea', '<input id="quickTaskInput" class="modal-input" placeholder="¿Qué necesitas hacer?">', [
             { text: 'Cancelar' },
             { text: 'Añadir', primary: true, onClick: ()=>{
@@ -956,10 +1154,14 @@
         document.querySelectorAll('.timer-mode-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active');
         const mins = parseInt(b.dataset.time);
         stopTimer(); timerSeconds = mins*60; updateTimerDisplay();
+        timerStatus.textContent = 'Listo para enfocarte';
       }));
 
       document.getElementById('setReminderBtn').addEventListener('click', ()=>{
-        showModal('Recordatorio', `<input id="reminderText" class="modal-input" placeholder="ej: Revisar informe"><input id="reminderMinutes" class="modal-input" type="number" value="5" placeholder="Minutos">`, [
+        showModal('Recordatorio', `
+          <input id="reminderText" class="modal-input" placeholder="ej: Revisar informe">
+          <input id="reminderMinutes" class="modal-input" type="number" value="5" placeholder="Minutos">
+        `, [
           { text: 'Cancelar' },
           { text: 'Programar', primary: true, onClick: ()=>{
             const msg = document.getElementById('reminderText').value;
@@ -975,11 +1177,12 @@
         tasks = tasks.filter(t=>!t.completed); saveAll(); renderTasks();
       });
 
-      // Tema oscuro simple
+      // Tema oscuro mejorado
       let dark = false;
       document.getElementById('themeToggleBtn').addEventListener('click', ()=>{
         dark = !dark;
-        document.body.style.filter = dark ? 'invert(0.9) hue-rotate(180deg)' : 'none';
+        document.querySelector('.app-container').style.filter = dark ? 'brightness(0.9) invert(0.9) hue-rotate(180deg)' : 'none';
+        document.body.style.background = dark ? '#1a1a2e' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
       });
     }
 
