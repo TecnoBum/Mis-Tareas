@@ -307,11 +307,23 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       transition: all 0.2s ease;
       backdrop-filter: blur(10px);
+      position: relative;
     }
 
     .note-card:active {
       transform: scale(0.99);
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .note-color-dot {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
     .note-title {
@@ -320,6 +332,7 @@
       margin-bottom: 12px;
       color: #1a1a2e;
       letter-spacing: -0.01em;
+      padding-right: 32px;
     }
 
     .note-content {
@@ -354,11 +367,37 @@
       background: rgba(102, 126, 234, 0.1);
     }
 
+    /* Color picker in modal */
+    .color-picker-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .color-option {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .color-option.selected {
+      border-color: #667eea;
+      transform: scale(1.05);
+      box-shadow: 0 0 0 2px white, 0 0 0 4px #667eea;
+    }
+    .color-option:active {
+      transform: scale(0.95);
+    }
+
     /* Tareas mejoradas */
     .task-filters {
       display: flex;
       gap: 10px;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .filter-chip {
@@ -384,6 +423,62 @@
 
     .filter-chip:active {
       transform: scale(0.97);
+    }
+
+    /* Barra de progreso */
+    .progress-container {
+      background: #e2e8f0;
+      border-radius: 20px;
+      height: 12px;
+      margin: 16px 0 20px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20px;
+      transition: width 0.3s ease;
+    }
+    .progress-text {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #64748b;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    /* Sort controls */
+    .sort-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.7);
+      border-radius: 20px;
+      padding: 8px 16px;
+      margin-bottom: 20px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .sort-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sort-select {
+      background: white;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      border-radius: 40px;
+      padding: 8px 16px;
+      font-family: "Inter", sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1a1a2e;
+      cursor: pointer;
+      outline: none;
     }
 
     .task-list {
@@ -555,6 +650,22 @@
       color: #667eea;
     }
 
+    .sound-toggle {
+      margin-top: 16px;
+      text-align: center;
+    }
+    .sound-toggle button {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #667eea;
+      padding: 8px 16px;
+      border-radius: 30px;
+      background: rgba(102,126,234,0.1);
+      font-weight: 500;
+    }
+
     .reminder-section {
       background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
       border-radius: 24px;
@@ -588,7 +699,7 @@
       background-clip: text;
     }
 
-    /* Footer fijo - NUEVO */
+    /* Footer fijo */
     .bottom-nav {
       background: rgba(255,255,255,0.95);
       backdrop-filter: blur(20px);
@@ -858,6 +969,7 @@
           </div>
         </div>
         <div class="header-actions">
+          <button class="icon-btn" id="exportDataBtn"><i class="fas fa-download"></i></button>
           <button class="icon-btn" id="changeUserBtn"><i class="fas fa-users"></i></button>
           <button class="icon-btn" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
         </div>
@@ -880,11 +992,29 @@
 
       <!-- Panel Tareas -->
       <div class="panel" id="tasksPanel">
+        <!-- Barra de progreso nueva -->
+        <div id="taskProgressArea">
+          <div class="progress-text" id="progressText">0 de 0 tareas completadas (0%)</div>
+          <div class="progress-container"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        
         <div class="task-filters">
           <div class="filter-chip active" data-filter="all">Todas</div>
           <div class="filter-chip" data-filter="active">Activas</div>
           <div class="filter-chip" data-filter="completed">Hechas</div>
         </div>
+        
+        <!-- Control de ordenamiento -->
+        <div class="sort-controls">
+          <span class="sort-label"><i class="fas fa-sort-amount-down-alt"></i> Ordenar:</span>
+          <select id="sortSelect" class="sort-select">
+            <option value="date_asc">Más antigua</option>
+            <option value="date_desc">Más reciente</option>
+            <option value="alpha_asc">A → Z</option>
+            <option value="alpha_desc">Z → A</option>
+          </select>
+        </div>
+        
         <ul class="task-list" id="taskListContainer"></ul>
         <div class="add-task-bar">
           <input type="text" id="newTaskInput" placeholder="Nueva tarea...">
@@ -915,6 +1045,9 @@
             <button class="timer-btn" id="pauseTimerBtn"><i class="fas fa-pause"></i>Pausa</button>
           </div>
           <p style="text-align:center; margin-top:20px; color:#64748b;" id="timerStatus">Listo para enfocarte</p>
+          <div class="sound-toggle">
+            <button id="soundToggleBtn" style="background: rgba(102,126,234,0.1);"><i class="fas fa-volume-up"></i> Notificaciones activas</button>
+          </div>
         </div>
         
         <div class="stats-grid">
@@ -934,7 +1067,7 @@
     <!-- FAB -->
     <button class="fab-add" id="fabAddBtn"><i class="fas fa-plus"></i></button>
 
-    <!-- Footer fijo - sin scroll -->
+    <!-- Footer fijo -->
     <div class="bottom-nav">
       <div class="nav-item active" data-nav="notes"><i class="far fa-sticky-note"></i><span>Notas</span></div>
       <div class="nav-item" data-nav="tasks"><i class="far fa-check-circle"></i><span>Tareas</span></div>
@@ -964,6 +1097,10 @@
     let timerSeconds = 25 * 60;
     let timerRunning = false;
 
+    // Variables para ordenamiento y sonido
+    let taskSortOption = 'date_asc';
+    let soundEnabled = true;
+
     // DOM
     const welcomeScreen = document.getElementById('welcomeScreen');
     const mainInterface = document.getElementById('mainInterface');
@@ -983,12 +1120,17 @@
     const reminderMsg = document.getElementById('reminderMsg');
     const existingUsersSection = document.getElementById('existingUsersSection');
     const userList = document.getElementById('userList');
+    const sortSelect = document.getElementById('sortSelect');
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
 
     // Cargar datos del usuario actual
     function loadUserData() {
       if (currentUser && users[currentUser]) {
         const userData = users[currentUser];
         notes = userData.notes || [];
+        notes = notes.map(n => ({ ...n, color: n.color || '#ffffff' }));
         tasks = userData.tasks || [];
         pomodoroCount = userData.pomodoroCount || 0;
       } else {
@@ -1016,25 +1158,22 @@
     function switchUser(username) {
       if (!username) return;
       
-      // Guardar datos del usuario actual antes de cambiar
       if (currentUser) {
         saveUserData();
       }
       
-      // Cargar nuevo usuario
       currentUser = username;
       loadUserData();
       
-      // Actualizar UI
       updateUserUI();
       renderNotes();
       renderTasks();
       updateStats();
+      updateTaskProgress();
       
-      showAlertModal(`¡Bienvenido de vuelta, ${username}!`, false);
+      showAlertModal(`Bienvenido de vuelta, ${username}!`, false);
     }
 
-    // Actualizar UI con nombre de usuario
     function updateUserUI() {
       if (currentUser) {
         displayUserName.textContent = currentUser;
@@ -1042,7 +1181,6 @@
       }
     }
 
-    // Mostrar usuarios existentes
     function renderExistingUsers() {
       const userNames = Object.keys(users);
       if (userNames.length > 0) {
@@ -1093,7 +1231,26 @@
 
     function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
 
-    // Render Notas
+    // Selector de color para notas
+    const colorOptions = [
+      { name: 'Blanco', value: '#ffffff' },
+      { name: 'Amarillo', value: '#FFF9C4' },
+      { name: 'Verde', value: '#C8E6C9' },
+      { name: 'Azul', value: '#B3E5FC' },
+      { name: 'Rosa', value: '#F8BBD0' }
+    ];
+
+    function getColorPickerHtml(selectedColor = '#ffffff') {
+      let html = '<div class="color-picker-row">';
+      colorOptions.forEach(col => {
+        const isSelected = (col.value === selectedColor);
+        html += `<div class="color-option" data-color="${col.value}" style="background-color: ${col.value}; ${isSelected ? 'border-color: #667eea; transform: scale(1.05);' : ''}"></div>`;
+      });
+      html += '</div><input type="hidden" id="noteColorValue" value="'+selectedColor+'">';
+      return html;
+    }
+
+    // Render Notas con color
     function renderNotes() {
       if(!notes.length) { 
         notesGrid.innerHTML = '<div class="empty-message"><i class="far fa-file-alt"></i><br>Sin notas. Toca + para crear</div>'; 
@@ -1101,8 +1258,16 @@
       }
       let h = '';
       notes.forEach((n,i)=> {
-        h += `<div class="note-card"><div class="note-title">${escapeHtml(n.title)}</div><div class="note-content">${escapeHtml(n.content)}</div>
-        <div class="note-footer"><button data-edit="${i}"><i class="far fa-edit"></i></button><button data-del="${i}"><i class="far fa-trash-alt"></i></button></div></div>`;
+        const bgColor = n.color || '#ffffff';
+        h += `<div class="note-card" style="background-color: ${bgColor};">
+                <div class="note-color-dot" style="background-color: ${bgColor}; border:1px solid rgba(0,0,0,0.1);"></div>
+                <div class="note-title">${escapeHtml(n.title)}</div>
+                <div class="note-content">${escapeHtml(n.content)}</div>
+                <div class="note-footer">
+                  <button data-edit="${i}"><i class="far fa-edit"></i></button>
+                  <button data-del="${i}"><i class="far fa-trash-alt"></i></button>
+                </div>
+              </div>`;
       });
       notesGrid.innerHTML = h;
       document.querySelectorAll('[data-edit]').forEach(b=> b.addEventListener('click', ()=> editNoteModal(b.dataset.edit)));
@@ -1111,17 +1276,34 @@
 
     function editNoteModal(idx) {
       const note = notes[idx];
+      const currentColor = note.color || '#ffffff';
+      let colorPickerHtml = getColorPickerHtml(currentColor);
       showModal('Editar nota', `
         <input id="editTitle" class="modal-input" value="${escapeHtml(note.title)}" placeholder="Título">
         <textarea id="editContent" class="modal-input" rows="4" placeholder="Contenido">${escapeHtml(note.content)}</textarea>
+        <label style="font-weight:600; margin:8px 0 4px; display:block;">Color de fondo</label>
+        ${colorPickerHtml}
       `, [
         { text: 'Cancelar' },
         { text: 'Guardar', primary: true, onClick: ()=>{
           const newTitle = document.getElementById('editTitle').value.trim();
           const newContent = document.getElementById('editContent').value.trim();
-          if(newTitle) { notes[idx] = { title: newTitle, content: newContent }; saveUserData(); renderNotes(); }
+          let selectedColor = document.getElementById('noteColorValue') ? document.getElementById('noteColorValue').value : '#ffffff';
+          if(newTitle) { notes[idx] = { title: newTitle, content: newContent, color: selectedColor }; saveUserData(); renderNotes(); }
         }}
       ]);
+      
+      setTimeout(() => {
+        document.querySelectorAll('.color-option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            const colorVal = opt.dataset.color;
+            const hiddenInput = document.getElementById('noteColorValue');
+            if(hiddenInput) hiddenInput.value = colorVal;
+          });
+        });
+      }, 50);
     }
 
     function deleteNote(idx) {
@@ -1131,29 +1313,81 @@
     }
 
     function createNoteModal() {
+      let colorPickerHtml = getColorPickerHtml('#ffffff');
       showModal('Nueva nota', `
         <input id="newNoteTitle" class="modal-input" placeholder="Título">
         <textarea id="newNoteContent" class="modal-input" rows="4" placeholder="Contenido (opcional)"></textarea>
+        <label style="font-weight:600; margin:8px 0 4px; display:block;">Color de fondo</label>
+        ${colorPickerHtml}
       `, [
         { text: 'Cancelar' },
         { text: 'Crear', primary: true, onClick: ()=>{
           const title = document.getElementById('newNoteTitle').value.trim();
           if(!title) { showAlertModal('El título es obligatorio'); return; }
-          notes.push({ title, content: document.getElementById('newNoteContent').value.trim() });
+          let selectedColor = document.getElementById('noteColorValue') ? document.getElementById('noteColorValue').value : '#ffffff';
+          notes.push({ title, content: document.getElementById('newNoteContent').value.trim(), color: selectedColor });
           saveUserData(); renderNotes();
         }}
       ]);
+      
+      setTimeout(() => {
+        document.querySelectorAll('.color-option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            const colorVal = opt.dataset.color;
+            const hiddenInput = document.getElementById('noteColorValue');
+            if(hiddenInput) hiddenInput.value = colorVal;
+          });
+        });
+      }, 50);
     }
 
-    // Tareas
+    // Barra de progreso de tareas
+    function updateTaskProgress() {
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.completed).length;
+      const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+      if (progressFill) {
+        progressFill.style.width = `${percent}%`;
+      }
+      if (progressText) {
+        progressText.textContent = `${completed} de ${total} tareas completadas (${percent}%)`;
+      }
+    }
+
+    // Tareas con ordenamiento
+    function sortTasks(taskArray) {
+      const sorted = [...taskArray];
+      switch(taskSortOption) {
+        case 'date_asc':
+          sorted.sort((a,b) => (a.id || 0) - (b.id || 0));
+          break;
+        case 'date_desc':
+          sorted.sort((a,b) => (b.id || 0) - (a.id || 0));
+          break;
+        case 'alpha_asc':
+          sorted.sort((a,b) => a.text.localeCompare(b.text));
+          break;
+        case 'alpha_desc':
+          sorted.sort((a,b) => b.text.localeCompare(a.text));
+          break;
+        default: break;
+      }
+      return sorted;
+    }
+
     function renderTasks() {
       let filtered = tasks;
       if(currentTaskFilter==='active') filtered = tasks.filter(t=>!t.completed);
       else if(currentTaskFilter==='completed') filtered = tasks.filter(t=>t.completed);
-      if(!filtered.length) { taskListContainer.innerHTML = '<div class="empty-message">No hay tareas</div>'; }
+      
+      const sortedFiltered = sortTasks(filtered);
+      
+      if(!sortedFiltered.length) { taskListContainer.innerHTML = '<div class="empty-message">No hay tareas</div>'; }
       else {
         let h = '';
-        filtered.forEach(t=> {
+        sortedFiltered.forEach(t=> {
           h += `<li class="task-row ${t.completed?'completed':''}" data-id="${t.id}">
             <div class="task-checkbox" data-action="toggle">${t.completed?'<i class="fas fa-check"></i>':''}</div>
             <span class="task-text">${escapeHtml(t.text)}</span>
@@ -1163,11 +1397,35 @@
         taskListContainer.innerHTML = h;
       }
       updateStats();
+      updateTaskProgress();
     }
 
     function updateStats() {
       pendingTasksCountSpan.textContent = tasks.filter(t=>!t.completed).length;
       pomodoroCountSpan.textContent = pomodoroCount;
+      updateTaskProgress();
+    }
+
+    // Notificaciones mejoradas
+    function requestNotificationPermission() {
+      if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+        Notification.requestPermission();
+      }
+    }
+    
+    function playNotificationAndAlert(message) {
+      if (!soundEnabled) return;
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Mis Tareas', { body: message, icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23667eea"%3E%3Cpath d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15h-2v-2h2v2zm0-4h-2V7h2v6z"/%3E%3C/svg%3E' });
+      }
+      if (navigator.vibrate) navigator.vibrate(200);
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.9;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      }
     }
 
     // Timer
@@ -1183,13 +1441,15 @@
       if(timerRunning) return;
       if(timerSeconds <=0) timerSeconds = 25*60;
       timerRunning = true;
-      timerStatus.textContent = '⏳ En progreso...';
+      timerStatus.textContent = 'En progreso...';
       timerInterval = setInterval(()=> {
         if(timerSeconds>0) { timerSeconds--; updateTimerDisplay(); }
         else {
           stopTimer();
           pomodoroCount++; saveUserData(); updateStats();
-          showAlertModal('🎉 ¡Tiempo completado!');
+          const completionMsg = 'Tiempo completado';
+          showAlertModal(completionMsg);
+          playNotificationAndAlert('Tiempo completado');
           timerStatus.textContent = 'Listo';
           updateTimerDisplay();
         }
@@ -1241,19 +1501,59 @@
       }, 100);
     }
 
-    // Exponer función global para el modal
     window.switchToUser = function(username) {
       switchUser(username);
       hideModal();
       showMainInterface();
     };
 
+    // Exportar datos del usuario actual
+    function exportUserData() {
+      if (!currentUser) {
+        showAlertModal('No hay usuario activo');
+        return;
+      }
+      const exportData = {
+        usuario: currentUser,
+        fecha_exportacion: new Date().toISOString(),
+        notas: notes,
+        tareas: tasks,
+        contador_pomodoro: pomodoroCount
+      };
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([dataStr], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mis_tareas_${currentUser}_${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showAlertModal('Datos exportados correctamente');
+    }
+
+    function showMainInterface() {
+      welcomeScreen.style.display='none'; 
+      mainInterface.style.display='flex';
+      updateUserUI();
+      renderNotes(); 
+      renderTasks(); 
+      updateTimerDisplay(); 
+      updateStats();
+    }
+
     // Inicialización
     function init() {
-      // Cargar usuarios
       const savedUsers = localStorage.getItem('mis_tareas_users');
       if (savedUsers) {
         users = JSON.parse(savedUsers);
+      }
+      
+      const savedSound = localStorage.getItem('pomodoro_sound_enabled');
+      if (savedSound !== null) soundEnabled = savedSound === 'true';
+      if (soundToggleBtn) {
+        soundToggleBtn.innerHTML = soundEnabled ? '<i class="fas fa-volume-up"></i> Notificaciones activas' : '<i class="fas fa-volume-mute"></i> Notificaciones silenciadas';
       }
       
       renderExistingUsers();
@@ -1270,7 +1570,6 @@
         const name = document.getElementById('userNameInput').value.trim();
         if(!name) { showAlertModal('Ingresa tu nombre'); return; }
         
-        // Guardar datos del usuario anterior si existe
         if (currentUser) {
           saveUserData();
         }
@@ -1286,17 +1585,6 @@
         renderExistingUsers();
       });
 
-      function showMainInterface() {
-        welcomeScreen.style.display='none'; 
-        mainInterface.style.display='flex';
-        updateUserUI();
-        renderNotes(); 
-        renderTasks(); 
-        updateTimerDisplay(); 
-        updateStats();
-      }
-
-      // Avatar click para cambiar usuario
       userAvatar.addEventListener('click', showUserSwitcher);
       
       document.getElementById('changeUserBtn').addEventListener('click', ()=>{
@@ -1312,11 +1600,11 @@
         });
       });
 
-      // Navegación
+      document.getElementById('exportDataBtn').addEventListener('click', exportUserData);
+
       document.querySelectorAll('.tab-btn').forEach(b=> b.addEventListener('click', ()=> switchView(b.dataset.view)));
       document.querySelectorAll('.nav-item').forEach(n=> n.addEventListener('click', ()=> switchView(n.dataset.nav)));
       
-      // FAB
       document.getElementById('fabAddBtn').addEventListener('click', ()=>{
         if(currentView === 'notes') createNoteModal();
         else if(currentView === 'tasks') {
@@ -1330,7 +1618,6 @@
         }
       });
 
-      // Tareas
       document.getElementById('addTaskBtn').addEventListener('click', ()=>{
         const txt = newTaskInput.value.trim(); if(!txt) return;
         tasks.push({ id: Date.now()+'-'+Math.random(), text: txt, completed: false });
@@ -1352,7 +1639,13 @@
         renderTasks();
       }));
 
-      // Timer
+      if (sortSelect) {
+        sortSelect.addEventListener('change', (e) => {
+          taskSortOption = e.target.value;
+          renderTasks();
+        });
+      }
+
       document.getElementById('startTimerBtn').addEventListener('click', startTimer);
       document.getElementById('pauseTimerBtn').addEventListener('click', ()=>{ stopTimer(); timerStatus.textContent='Pausado'; });
       document.querySelectorAll('.timer-mode-btn').forEach(b=> b.addEventListener('click', ()=>{
@@ -1373,7 +1666,7 @@
             const mins = parseInt(document.getElementById('reminderMinutes').value);
             if(!msg || mins<1) return;
             reminderMsg.textContent = `"${msg}" en ${mins} min`;
-            setTimeout(()=> { showAlertModal(`🔔 Recordatorio: ${msg}`); reminderMsg.textContent = 'No hay recordatorios'; }, mins*60000);
+            setTimeout(()=> { showAlertModal(`Recordatorio: ${msg}`); reminderMsg.textContent = 'No hay recordatorios'; }, mins*60000);
           }}
         ]);
       });
@@ -1382,13 +1675,28 @@
         tasks = tasks.filter(t=>!t.completed); saveUserData(); renderTasks();
       });
 
-      // Tema oscuro
+      if (soundToggleBtn) {
+        soundToggleBtn.addEventListener('click', () => {
+          soundEnabled = !soundEnabled;
+          localStorage.setItem('pomodoro_sound_enabled', soundEnabled);
+          soundToggleBtn.innerHTML = soundEnabled ? '<i class="fas fa-volume-up"></i> Notificaciones activas' : '<i class="fas fa-volume-mute"></i> Notificaciones silenciadas';
+          if (soundEnabled) requestNotificationPermission();
+          else showAlertModal('Notificaciones desactivadas');
+        });
+      }
+
       let dark = false;
       document.getElementById('themeToggleBtn').addEventListener('click', ()=>{
         dark = !dark;
         document.querySelector('.app-container').style.filter = dark ? 'brightness(0.9) invert(0.9) hue-rotate(180deg)' : 'none';
         document.body.style.background = dark ? '#1a1a2e' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
       });
+      
+      setTimeout(() => {
+        if (soundEnabled && 'Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission();
+        }
+      }, 1000);
     }
 
     init();
